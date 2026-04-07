@@ -1,16 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\PreRegistrationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\MaritalStatusController;
 
-// Rotas públicas
-Route::get('/events', [EventController::class, 'index']);
+// Criará automaticamente as rotas GET, POST, PUT e DELETE para os métodos do Controller
+Route::apiResource('events', EventController::class);
+Route::apiResource('roles', RoleController::class);
+Route::apiResource('marital-statuses', MaritalStatusController::class);
 
-// Rotas protegidas (Usuário precisa estar logado no Svelte para acessar)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/events', [EventController::class, 'store']);
-    Route::get('/pre-registrations', [PreRegistrationController::class, 'index']);
-});
