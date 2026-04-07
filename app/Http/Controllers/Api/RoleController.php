@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class EventController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return response()->json(Event::all());
+        //
     }
 
     /**
@@ -20,14 +20,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nome' => 'required|string',
-            'local' => 'required|string',
-            'ano' => 'required|integer',
-            'data_inicio' => 'required|date',
-            'duracao' => 'required|integer',
-            'tipo' => 'required|string',
-        ]);
+        //
     }
 
     /**
