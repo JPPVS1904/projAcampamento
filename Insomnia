@@ -1,0 +1,58 @@
+Autenticação / Usuários (sem auth)
+  # Criar usuário
+  curl -X POST http://localhost/api/v1/users \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"name":"Teste","email":"teste@email.com","password":"password"}'
+
+  Rotas autenticadas (substitua SEU_TOKEN pelo token do Sanctum)
+
+  # Usuário autenticado
+  curl -X GET http://localhost/api/v1/user \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Usuários
+  curl -X GET http://localhost/api/v1/users \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Status Civil
+  curl -X GET http://localhost/api/v1/marital-statuses \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Funções
+  curl -X GET http://localhost/api/v1/roles \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Métodos de Seleção
+  curl -X GET http://localhost/api/v1/selection-methods \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Setores
+  curl -X GET http://localhost/api/v1/sectors \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Campings
+  curl -X GET http://localhost/api/v1/campings \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Festivais
+  curl -X GET http://localhost/api/v1/festivals \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Eventos
+  curl -X GET http://localhost/api/v1/events \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"
+
+  # Inscrições
+  curl -X GET http://localhost/api/v1/subscriptions \
+    -H "Authorization: Bearer SEU_TOKEN" \
+    -H "Accept: application/json"

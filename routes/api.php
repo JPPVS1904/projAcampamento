@@ -1,35 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\MaritalStatusController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\V1\CampingController;
+use App\Http\Controllers\Api\V1\EventController;
+use App\Http\Controllers\Api\V1\FestivalController;
+use App\Http\Controllers\Api\V1\MaritalStatusController;
+use App\Http\Controllers\Api\V1\RoleController;
+use App\Http\Controllers\Api\V1\SectorController;
+use App\Http\Controllers\Api\V1\SelectionMethodController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-// Rota pública para cadastro de novos usuários
-Route::post('/register', [UserController::class, 'store']);
+Route::prefix('v1')->name('api.v1.')->group(function () {
+    Route::post('users', [UserController::class, 'store'])->name('users.store');
 
-// Rota de Login (exemplo simplificado)
-Route::post('/login', function (Request $request) {
-    $user = App\Models\User::where('email', $request->email)->first();
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Credenciais inválidas'], 401);
-    }
-    return response()->json(['token' => $user->createToken('svelte-token')->plainTextToken]);
-});
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/user', fn (Request $request) => $request->user())->name('user');
 
-// Rotas Protegidas (Só acessa quem tem o Token)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', function (Request $request) {
-        return $request->user(); // Retorna os dados do usuário logado
+        Route::apiResource('marital-statuses', MaritalStatusController::class);
+        Route::apiResource('roles', RoleController::class);
+        Route::apiResource('selection-methods', SelectionMethodController::class);
+        Route::apiResource('sectors', SectorController::class);
+        Route::apiResource('campings', CampingController::class);
+        Route::apiResource('festivals', FestivalController::class);
+        Route::apiResource('events', EventController::class);
+        Route::apiResource('subscriptions', SubscriptionController::class);
+        Route::apiResource('users', UserController::class)->except('store');
     });
-    Route::apiResource('users', UserController::class)->except(['store']);
 });
-
-// Criará automaticamente as rotas GET, POST, PUT e DELETE para os métodos do Controller
-Route::apiResource('events', EventController::class);
-Route::apiResource('roles', RoleController::class);
-Route::apiResource('marital-statuses', MaritalStatusController::class);
-
