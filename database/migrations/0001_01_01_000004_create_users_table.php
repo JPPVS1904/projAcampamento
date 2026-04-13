@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('phone');
             $table->string('email');
             $table->boolean('is_counselor');
+            $table->string('picture');
+            $table->string('document');
 
             $table->string('password');
             $table->rememberToken();
