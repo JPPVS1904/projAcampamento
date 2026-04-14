@@ -34,6 +34,8 @@ class UserFactory extends Factory
             'phone' => fake()->numerify('###########'),
             'email' => fake()->unique()->safeEmail(),
             'is_counselor' => fake()->boolean(),
+            'picture' => fake()->image(),
+            'document' => fake()->image(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'marital_status_id' => MaritalStatus::factory(),

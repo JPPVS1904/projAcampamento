@@ -22,6 +22,8 @@ use Laravel\Sanctum\HasApiTokens;
     'phone',
     'email',
     'is_counselor',
+    'picture',
+    'document',
     'password',
     'marital_status_id',
 ])]
