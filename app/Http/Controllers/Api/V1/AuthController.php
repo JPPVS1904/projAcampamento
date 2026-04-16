@@ -16,11 +16,9 @@ class AuthController extends Controller
     public function register(StoreUserRequest $request): JsonResponse
     {
         $user = User::create($request->validated());
-        $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
-            'data' => UserResource::make($user),
-            'token' => $token,
+            'data' => UserResource::make($user)
         ], 201);
     }
 
@@ -34,6 +32,7 @@ class AuthController extends Controller
             ]);
         }
 
+        $user->tokens()->delete();
         $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
