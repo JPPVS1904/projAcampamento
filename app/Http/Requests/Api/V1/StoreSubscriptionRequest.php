@@ -3,8 +3,11 @@
 namespace App\Http\Requests\Api\V1;
 
 use App\Enums\SubscriptionType;
+use App\Models\Camping;
+use App\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class StoreSubscriptionRequest extends FormRequest
 {
@@ -29,7 +32,7 @@ class StoreSubscriptionRequest extends FormRequest
             'qrcode_data' => ['required', 'string', 'max:255'],
             'used_qrcode' => ['required', 'boolean'],
             'selection_method_id' => ['required', 'integer', 'exists:selection_methods,id'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'user_id' => ['required', 'integer', 'exists:users,id', Rule::in([$this->user()?->id])],
             'spouse_id' => ['nullable', 'integer', 'exists:users,id'],
             'event_id' => ['required', 'integer', 'exists:events,id'],
             'sector_id' => ['nullable', 'integer', 'exists:sectors,id'],
