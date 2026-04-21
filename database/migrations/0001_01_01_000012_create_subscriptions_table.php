@@ -28,9 +28,9 @@ return new class extends Migration
 
             $table->foreignId('selection_method_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('spouse_id')->references('id')->on('users')->constrained()->nullable();
+            $table->foreignId('spouse_id')->nullable()->constrained('users');
             $table->foreignId('event_id')->constrained();
-            $table->foreignId('sector_id')->constrained()->nullable();
+            $table->foreignId('sector_id')->nullable()->constrained();
 
             $table->timestamps();
             $table->softDeletes();

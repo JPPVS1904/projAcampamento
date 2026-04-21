@@ -38,4 +38,67 @@ class StoreSubscriptionRequest extends FormRequest
             'sector_id' => ['nullable', 'integer', 'exists:sectors,id'],
         ];
     }
+
+    /**
+     * @return array<callable>
+     */
+    public function after(): array
+    {
+        return [
+            function (Validator $validator) {
+                $user = $this->user();
+                $eventId = $this->input('event_id');
+
+                if (!$user || !$eventId) {
+                    return;
+                }
+
+                $event = Event::with('eventable')->find($eventId);
+
+                if (!$event) {
+                    return;
+                }
+
+                $alreadySubscribed = $user->subscriptions()->where('event_id', $event->id)->exists();
+
+                if ($alreadySubscribed) {
+                    $validator->errors()->add('user_id', 'O usuário já está inscrito neste evento.');
+                }
+
+                if ($event->eventable instanceof Camping) {
+                    $camping = $event->eventable;
+                    $subscriptionType = $this->input('subscription_type');
+                    $now = now();
+
+                    if ($subscriptionType === SubscriptionType::Camper->value) {
+                        if ($camping->camper_registration_start_date && $now->lt($camping->camper_registration_start_date)) {
+                            $validator->errors()->add('event_id', 'As inscrições para campistas ainda não começaram.');
+                        }
+                        if ($camping->camper_registration_end_date && $now->gt($camping->camper_registration_end_date)) {
+                            $validator->errors()->add('event_id', 'As inscrições para campistas já foram encerradas.');
+                        }
+                    } elseif ($subscriptionType === SubscriptionType::Servant->value) {
+                        if ($camping->servant_registration_start_date && $now->lt($camping->servant_registration_start_date)) {
+                            $validator->errors()->add('event_id', 'As inscrições para servos ainda não começaram.');
+                        }
+                        if ($camping->servant_registration_end_date && $now->gt($camping->servant_registration_end_date)) {
+                            $validator->errors()->add('event_id', 'As inscrições para servos já foram encerradas.');
+                        }
+                    }
+
+                    if ($user->birthday) {
+                        $age = $user->birthday->age;
+
+                        if ($age < $camping->minimal_age) {
+                            $validator->errors()->add('user_id', 'O usuário não possui a idade mínima para participar deste acampamento.');
+                        }
+
+                        if ($age > $camping->maximal_age) {
+                            $validator->errors()->add('user_id', 'O usuário excede a idade máxima para participar deste acampamento.');
+                        }
+                    }
+                }
+            }
+        ];
+    }
 }

@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         Role::insert([
             ['title' => 'Campista'],
             ['title' => 'Coordenador geral'],
-            ['title' => 'Coordenador de setor'],
+            ['title' => 'Coordenador de equipe'],
         ]);
 
         MaritalStatus::insert([
@@ -52,6 +52,11 @@ class DatabaseSeeder extends Seeder
                 'method' => 'Base',
                 'description' => 'Indicado pelo coordenador de setor',
             ],
+        ]);
+
+        $this->call([
+            CampingSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
