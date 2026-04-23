@@ -21,7 +21,7 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'image' => ['required', 'string', 'max:255'],
+            'image' => ['string', 'max:255'],
             'place' => ['required', 'string', 'max:255'],
             'year' => ['required', 'integer', 'min:1900', 'max:2155'],
             'start_date' => ['required', 'date'],
