@@ -26,7 +26,13 @@ class SubscriptionController extends Controller
 
     public function store(StoreSubscriptionRequest $request): SubscriptionResource
     {
-        return SubscriptionResource::make(Subscription::create($request->validated()));
+        $subscription = Subscription::create($request->validated());
+
+        if ($subscription->event && $subscription->event->total_vacancies > 0) {
+            $subscription->event->decrement('total_vacancies');
+        }
+
+        return SubscriptionResource::make($subscription);
     }
 
     public function show(Subscription $subscription): SubscriptionResource

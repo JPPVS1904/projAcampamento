@@ -17,9 +17,9 @@ class StoreCampingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'notice' => ['string', 'max:255'],
-            'term' => ['string', 'max:255'],
-            'image' => ['string', 'max:255'],
+            'notice' => ['nullable', 'string', 'max:255'],
+            'term' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'string', 'max:255'],
             'minimal_age' => ['required', 'integer', 'min:0'],
             'maximal_age' => ['required', 'integer', 'min:0'],
             'camper_fee' => ['required', 'numeric', 'min:0'],

@@ -17,9 +17,9 @@ class UpdateCampingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'notice' => ['sometimes', 'required', 'string', 'max:255'],
-            'term' => ['sometimes', 'required', 'string', 'max:255'],
-            'image' => ['sometimes', 'required', 'string', 'max:255'],
+            'notice' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'term' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'image' => ['sometimes', 'nullable', 'string', 'max:255'],
             'minimal_age' => ['sometimes', 'required', 'integer', 'min:0'],
             'maximal_age' => ['sometimes', 'required', 'integer', 'min:0'],
             'camper_fee' => ['sometimes', 'required', 'numeric', 'min:0'],
