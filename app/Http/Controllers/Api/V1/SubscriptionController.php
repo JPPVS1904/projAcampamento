@@ -7,14 +7,21 @@ use App\Http\Requests\Api\V1\StoreSubscriptionRequest;
 use App\Http\Requests\Api\V1\UpdateSubscriptionRequest;
 use App\Http\Resources\V1\SubscriptionResource;
 use App\Models\Subscription;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class SubscriptionController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        return SubscriptionResource::collection(Subscription::paginate());
+        $query = Subscription::with(['event']);
+        
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->input('user_id'));
+        }
+        
+        return SubscriptionResource::collection($query->paginate());
     }
 
     public function store(StoreSubscriptionRequest $request): SubscriptionResource
