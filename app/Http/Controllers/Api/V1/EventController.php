@@ -19,25 +19,11 @@ class EventController extends Controller
         $query = Event::with('eventable');
 
         if ($request->boolean('available')) {
-            $query->whereHasMorph('eventable', [\App\Models\Camping::class, \App\Models\Festival::class], function (Builder $query, string $type) {
-                $now = now();
-                if ($type === \App\Models\Camping::class) {
-                    $query->where(function ($q) use ($now) {
-                        $q->where(function ($subQ) use ($now) {
-                            $subQ->where('raffle_camper_subscription_start_date', '<=', $now)
-                                 ->where('raffle_camper_subscription_end_date', '>=', $now);
-                        })->orWhere(function ($subQ) use ($now) {
-                            $subQ->where('camper_registration_start_date', '<=', $now)
-                                 ->where('camper_registration_end_date', '>=', $now);
-                        });
-                    });
-                } elseif ($type === \App\Models\Festival::class) {
-                    $query->where('sale_start_date', '<=', $now);
-                }
-            });
+            // Mostra apenas eventos cuja data de início (mais a duração) ainda não passou
+            $query->whereRaw('DATE_ADD(start_date, INTERVAL duration_days DAY) >= ?', [now()]);
         }
 
-        return EventResource::collection($query->paginate());
+        return EventResource::collection($query->paginate($request->input('per_page', 100)));
     }
 
     public function store(StoreEventRequest $request): EventResource

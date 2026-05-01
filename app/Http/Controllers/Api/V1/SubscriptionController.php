@@ -21,7 +21,7 @@ class SubscriptionController extends Controller
             $query->where('user_id', $request->input('user_id'));
         }
         
-        return SubscriptionResource::collection($query->paginate());
+        return SubscriptionResource::collection($query->paginate($request->input('per_page', 100)));
     }
 
     public function store(StoreSubscriptionRequest $request): SubscriptionResource
