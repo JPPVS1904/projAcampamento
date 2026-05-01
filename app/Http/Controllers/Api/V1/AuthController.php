@@ -32,8 +32,17 @@ class AuthController extends Controller
             ]);
         }
 
+        $remember = $request->boolean('remember');
+
+        if ($remember) {
+            $user->remember_token = \Illuminate\Support\Str::random(60);
+            $user->save();
+        }
+
         $user->tokens()->delete();
-        $token = $user->createToken('api')->plainTextToken;
+        
+        $expiresAt = $remember ? now()->addDays(30) : now()->addHours(2);
+        $token = $user->createToken('api', ['*'], $expiresAt)->plainTextToken;
 
         return response()->json([
             'data' => UserResource::make($user),
