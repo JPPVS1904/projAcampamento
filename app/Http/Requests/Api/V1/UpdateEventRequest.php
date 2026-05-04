@@ -21,7 +21,7 @@ class UpdateEventRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'image' => ['sometimes', 'required', 'string', 'max:255'],
+            'image' => ['sometimes', 'nullable', 'string', 'max:255'],
             'place' => ['sometimes', 'required', 'string', 'max:255'],
             'year' => ['sometimes', 'required', 'integer', 'min:1900', 'max:2155'],
             'start_date' => ['sometimes', 'required', 'date'],
