@@ -51,6 +51,9 @@ class SubscriptionController extends Controller
 
     public function destroy(Subscription $subscription): Response
     {
+        if ($subscription->event) {
+            $subscription->event->increment('total_vacancies');
+        }
         $subscription->delete();
 
         return response()->noContent();
