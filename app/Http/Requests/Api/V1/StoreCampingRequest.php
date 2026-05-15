@@ -39,11 +39,11 @@ class StoreCampingRequest extends FormRequest
             'raffle_servant_date' => ['required', 'date'],
             'camper_registration_start_date' => ['required', 'date'],
             'camper_registration_end_date' => ['required', 'date'],
-            'camper_payment_link' => ['date'],
+            'camper_payment_link' => ['nullable', 'string', 'max:255'],
             'camper_payment_date' => ['date'],
             'servant_registration_start_date' => ['required', 'date'],
             'servant_registration_end_date' => ['required', 'date'],
-            'servant_payment_link' => ['required', 'date'],
+            'servant_payment_link' => ['required', 'string', 'max:255'],
             'servant_payment_date' => ['required', 'date'],
         ];
     }

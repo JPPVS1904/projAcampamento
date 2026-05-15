@@ -39,11 +39,11 @@ class UpdateCampingRequest extends FormRequest
             'raffle_servant_date' => ['sometimes', 'required', 'date'],
             'camper_registration_start_date' => ['sometimes', 'required', 'date'],
             'camper_registration_end_date' => ['sometimes', 'required', 'date'],
-            'camper_payment_link' => ['sometimes', 'required', 'date'],
+            'camper_payment_link' => ['sometimes', 'nullable', 'string', 'max:255'],
             'camper_payment_date' => ['sometimes', 'required', 'date'],
             'servant_registration_start_date' => ['sometimes', 'required', 'date'],
             'servant_registration_end_date' => ['sometimes', 'required', 'date'],
-            'servant_payment_link' => ['sometimes', 'required', 'date'],
+            'servant_payment_link' => ['sometimes', 'required', 'string', 'max:255'],
             'servant_payment_date' => ['sometimes', 'required', 'date'],
         ];
     }
