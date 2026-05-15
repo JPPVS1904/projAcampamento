@@ -69,11 +69,9 @@ class Camping extends Model
             'raffle_servant_date' => 'datetime',
             'camper_registration_start_date' => 'datetime',
             'camper_registration_end_date' => 'datetime',
-            'camper_payment_link' => 'datetime',
             'camper_payment_date' => 'datetime',
             'servant_registration_start_date' => 'datetime',
             'servant_registration_end_date' => 'datetime',
-            'servant_payment_link' => 'datetime',
             'servant_payment_date' => 'datetime',
         ];
     }
