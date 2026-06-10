@@ -26,8 +26,7 @@ class StoreUserRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:255'],
             'is_counselor' => ['required', 'boolean'],
-            'picture' => ['string'],
-            'document' => ['required', 'string'],
+            'photo' => ['nullable', 'string'],
             'password' => ['required', 'string', 'min:8'],
             'marital_status_id' => ['required', 'integer', 'exists:marital_statuses,id'],
         ];

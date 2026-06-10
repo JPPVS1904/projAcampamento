@@ -2,59 +2,44 @@
 
 namespace App\Models;
 
-use App\Enums\Sex;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
-#[Fillable([
-    'cpf',
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    protected $fillable = [
+        'cpf',
     'name',
     'birthday',
     'sex',
     'phone',
     'email',
+    'photo',
     'is_counselor',
-    'picture',
-    'document',
+    'is_admin',
     'password',
-    'marital_status_id',
-])]
-#[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
-{
-    /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    'access_token',
+    'refresh_token',
+    'marital_status_id'
+    ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
             'birthday' => 'date',
-            'sex' => Sex::class,
-            'is_counselor' => 'boolean',
             'password' => 'hashed',
+            'is_counselor' => 'boolean',
+            'is_admin' => 'boolean',
         ];
-    }
-
-    public function maritalStatus(): BelongsTo
-    {
-        return $this->belongsTo(MaritalStatus::class);
-    }
-
-    public function subscriptions(): HasMany
-    {
-        return $this->hasMany(Subscription::class);
     }
 }

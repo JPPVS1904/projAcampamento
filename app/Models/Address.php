@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
-use Database\Factories\RoleFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['title'])]
-class Role extends Model
+class Address extends Model
 {
-    /** @use HasFactory<RoleFactory> */
     use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'street',
+    'number',
+    'neighborhood',
+    'city',
+    'cep',
+    'user_id'
+    ];
 }

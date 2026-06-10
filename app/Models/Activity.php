@@ -6,11 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MaritalStatus extends Model
+class Activity extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title'
+        'name',
+    'image',
+    'place',
+    'year',
+    'start_date',
+    'duration_days',
+    'total_vacancies',
+    'category_id',
+    'activitable_type',
+    'activitable_id'
     ];
 }

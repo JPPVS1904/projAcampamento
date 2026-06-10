@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Database\Factories\CampingFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable([
-    'notice',
+class Camping extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'notice',
     'term',
     'image',
     'minimal_age',
@@ -37,47 +38,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'servant_registration_start_date',
     'servant_registration_end_date',
     'servant_payment_link',
-    'servant_payment_date',
-])]
-class Camping extends Model
-{
-    /** @use HasFactory<CampingFactory> */
-    use HasFactory, SoftDeletes;
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'minimal_age' => 'integer',
-            'maximal_age' => 'integer',
-            'camper_fee' => 'decimal:2',
-            'servant_fee' => 'decimal:2',
-            'planned_man_vacancies' => 'integer',
-            'planned_woman_vacancies' => 'integer',
-            'planned_couple_vacancies' => 'integer',
-            'raffle_man_vacancies' => 'integer',
-            'raffle_woman_vacancies' => 'integer',
-            'raffle_couple_vacancies' => 'integer',
-            'raffle_total_vacancies' => 'integer',
-            'raffle_camper_subscription_start_date' => 'datetime',
-            'raffle_camper_subscription_end_date' => 'datetime',
-            'raffle_camper_date' => 'datetime',
-            'raffle_servant_subscription_start_date' => 'datetime',
-            'raffle_servant_subscription_end_date' => 'datetime',
-            'raffle_servant_date' => 'datetime',
-            'camper_registration_start_date' => 'datetime',
-            'camper_registration_end_date' => 'datetime',
-            'camper_payment_date' => 'datetime',
-            'servant_registration_start_date' => 'datetime',
-            'servant_registration_end_date' => 'datetime',
-            'servant_payment_date' => 'datetime',
-        ];
-    }
-
-    public function event(): MorphOne
-    {
-        return $this->morphOne(Event::class, 'eventable');
-    }
+    'servant_payment_date'
+    ];
 }

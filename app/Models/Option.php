@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MaritalStatus extends Model
+class Option extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title'
+        'text',
+    'question_id'
     ];
 }

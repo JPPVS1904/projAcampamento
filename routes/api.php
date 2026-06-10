@@ -3,13 +3,18 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CampingController;
 use App\Http\Controllers\Api\V1\EventController;
-use App\Http\Controllers\Api\V1\FestivalController;
 use App\Http\Controllers\Api\V1\MaritalStatusController;
-use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\SectorController;
 use App\Http\Controllers\Api\V1\SelectionMethodController;
-use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\ActivityController;
+use App\Http\Controllers\Api\V1\AddressController;
+use App\Http\Controllers\Api\V1\AnswerController;
+use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\OptionController;
+use App\Http\Controllers\Api\V1\PreRegistrationController;
+use App\Http\Controllers\Api\V1\QuestionController;
+use App\Http\Controllers\Api\V1\SectionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,13 +28,20 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('/user', fn (Request $request) => $request->user())->name('user');
 
         Route::apiResource('marital-statuses', MaritalStatusController::class);
-        Route::apiResource('roles', RoleController::class);
         Route::apiResource('selection-methods', SelectionMethodController::class);
         Route::apiResource('sectors', SectorController::class);
         Route::apiResource('campings', CampingController::class);
-        Route::apiResource('festivals', FestivalController::class);
         Route::apiResource('events', EventController::class);
-        Route::apiResource('subscriptions', SubscriptionController::class);
         Route::apiResource('users', UserController::class)->except('store');
+        
+        // New CakePHP replicated routes
+        Route::apiResource('activities', ActivityController::class);
+        Route::apiResource('addresses', AddressController::class);
+        Route::apiResource('answers', AnswerController::class);
+        Route::apiResource('categories', CategoryController::class);
+        Route::apiResource('options', OptionController::class);
+        Route::apiResource('pre-registrations', PreRegistrationController::class);
+        Route::apiResource('questions', QuestionController::class);
+        Route::apiResource('sections', SectionController::class);
     });
 });
