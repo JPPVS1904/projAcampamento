@@ -22,4 +22,9 @@ class Activity extends Model
     'activitable_type',
     'activitable_id'
     ];
+
+    public function activitable()
+    {
+        return $this->morphTo();
+    }
 }

@@ -22,13 +22,18 @@ class CampingSeeder extends Seeder
         $yesterday = Carbon::yesterday();
         $tomorrow = Carbon::tomorrow();
 
-        foreach ($categories as $category) {
+        foreach ($categories as $categoryData) {
+            $category = \App\Models\Category::create([
+                'name' => $categoryData['name'],
+                'type' => 'Acampamento',
+            ]);
+
             $camping = Camping::create([
-                'notice' => 'Edital ' . $category['name'],
-                'term' => 'Termo ' . $category['name'],
+                'notice' => 'Edital ' . $categoryData['name'],
+                'term' => 'Termo ' . $categoryData['name'],
                 'image' => 'default.jpg',
-                'minimal_age' => $category['minimal_age'],
-                'maximal_age' => $category['maximal_age'],
+                'minimal_age' => $categoryData['minimal_age'],
+                'maximal_age' => $categoryData['maximal_age'],
                 'camper_fee' => 150.00,
                 'servant_fee' => 100.00,
                 'planned_man_vacancies' => 20,
@@ -54,14 +59,15 @@ class CampingSeeder extends Seeder
                 'servant_payment_date' => $tomorrow->copy()->addDays(5),
             ]);
 
-            $camping->event()->create([
-                'name' => $category['name'],
+            $camping->activity()->create([
+                'name' => $categoryData['name'],
                 'image' => 'default.jpg',
                 'place' => 'Sítio Recanto',
                 'year' => date('Y'),
                 'start_date' => Carbon::now()->addMonth(),
                 'duration_days' => 4,
                 'total_vacancies' => 100,
+                'category_id' => $category->id,
             ]);
         }
     }

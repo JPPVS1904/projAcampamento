@@ -16,7 +16,8 @@ class UserSeeder extends Seeder
             'name' => 'Usuário Mirim',
             'birthday' => Carbon::now()->subYears(11)->format('Y-m-d'),
             'email' => 'mirim@teste.com',
-            'marital_status_id' => 1, // Solteiro
+            'is_counselor' => 0,
+            'is_admin' => 1,
         ]);
 
         // Juvenil: 13 to 17 (Let's use 13)
@@ -25,7 +26,8 @@ class UserSeeder extends Seeder
             'name' => 'Usuário Juvenil',
             'birthday' => Carbon::now()->subYears(13)->format('Y-m-d'),
             'email' => 'juvenil@teste.com',
-            'marital_status_id' => 1,
+            'is_counselor' => 0,
+            'is_admin' => 1,
         ]);
 
         // FAC: 14 to 17 (Let's use 14)
@@ -34,48 +36,41 @@ class UserSeeder extends Seeder
             'name' => 'Usuário FAC',
             'birthday' => Carbon::now()->subYears(14)->format('Y-m-d'),
             'email' => 'fac@teste.com',
-            'marital_status_id' => 1,
-        ]);
-
-        // JOAM: 15 to 18 (Let's use 16)
-        User::factory()->create([
-            'cpf' => '44444444444',
-            'name' => 'Usuário JOAM',
-            'birthday' => Carbon::now()->subYears(16)->format('Y-m-d'),
-            'email' => 'joam@teste.com',
-            'marital_status_id' => 1,
+            'is_counselor' => 0,
+            'is_admin' => 1,
         ]);
 
         // Sênior: 18 to 100 (Let's use 30)
         User::factory()->create([
-            'cpf' => '55555555555',
+            'cpf' => '44444444444',
             'name' => 'Usuário Sênior',
             'birthday' => Carbon::now()->subYears(30)->format('Y-m-d'),
             'email' => 'senior@teste.com',
-            'marital_status_id' => 1,
+            'is_counselor' => 0,
+            'is_admin' => 1,
         ]);
 
         // Casais: 18 to 100 (Let's use 40, married)
         User::factory()->create([
-            'cpf' => '66666666666',
+            'cpf' => '55555555555',
             'name' => 'Usuário Casais',
             'birthday' => Carbon::now()->subYears(40)->format('Y-m-d'),
             'email' => 'casais@teste.com',
-            'marital_status_id' => 4, // Casado
+            'is_counselor' => 0,
+            'is_admin' => 1,
         ]);
 
         // Cônjuge do Usuário Casais
         User::factory()->create([
-            'cpf' => '77777777777',
+            'cpf' => '55555555556',
             'name' => 'Cônjuge Casais',
             'birthday' => Carbon::now()->subYears(38)->format('Y-m-d'),
             'email' => 'conjuge_casais@teste.com',
-            'marital_status_id' => 4, // Casado
+            'is_counselor' => 0,
+            'is_admin' => 0,
         ]);
-        
+
         // Some random users just in case
-        User::factory()->count(10)->create([
-            'marital_status_id' => 1,
-        ]);
+        User::factory()->count(10)->create();
     }
 }

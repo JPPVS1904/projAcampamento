@@ -17,4 +17,9 @@ class Event extends Model
     'sale_start_date',
     'payment_link'
     ];
+
+    public function activity()
+    {
+        return $this->morphOne(Activity::class, 'activitable');
+    }
 }

@@ -40,4 +40,9 @@ class Camping extends Model
     'servant_payment_link',
     'servant_payment_date'
     ];
+
+    public function activity()
+    {
+        return $this->morphOne(Activity::class, 'activitable');
+    }
 }
