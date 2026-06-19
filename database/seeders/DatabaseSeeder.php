@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\MaritalStatus;
 use App\Models\SelectionMethod;
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -30,13 +29,17 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Selecionado por meio de sorteio',
             ],
             [
-                'method' => 'Conselho',
-                'description' => 'Indicado pelo conselho',
+                'method' => 'Indicação',
+                'description' => 'Indicado por um conselheiro',
+            ],
+            [
+                'method' => 'Sorteio de Remanescentes',
+                'description' => 'Selecionado por meio de sorteio',
             ],
         ]);
 
         $this->call([
-            CampingSeeder::class,
+            // CampingSeeder::class,
             UserSeeder::class,
         ]);
     }
