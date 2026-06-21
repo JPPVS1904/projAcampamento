@@ -42,4 +42,19 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
         ];
     }
+
+    public function maritalStatus()
+    {
+        return $this->belongsTo(MaritalStatus::class);
+    }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
+
+    public function preRegistrations()
+    {
+        return $this->hasMany(PreRegistration::class);
+    }
 }

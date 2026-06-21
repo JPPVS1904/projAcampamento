@@ -24,7 +24,6 @@ class UpdateActivityRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'image' => ['sometimes', 'nullable', 'string', 'max:255'],
             'place' => ['sometimes', 'required', 'string', 'max:255'],
-            'year' => ['sometimes', 'required', 'integer', 'min:1900', 'max:2155'],
             'start_date' => ['sometimes', 'required', 'date'],
             'duration_days' => ['sometimes', 'required', 'integer', 'min:1'],
             'total_vacancies' => ['sometimes', 'required', 'integer', 'min:0'],
@@ -34,20 +33,14 @@ class UpdateActivityRequest extends FormRequest
             // Campos específicos do activitable (aninhados)
             'activitable_data' => ['sometimes', 'required', 'array'],
 
-            // Camping fields
+            // ── Camping fields ──
             'activitable_data.notice' => ['sometimes', 'nullable', 'string', 'max:255'],
             'activitable_data.term' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'activitable_data.minimal_age' => ['sometimes', 'integer', 'min:0'],
-            'activitable_data.maximal_age' => ['sometimes', 'integer', 'min:0'],
             'activitable_data.camper_fee' => ['sometimes', 'numeric', 'min:0'],
             'activitable_data.servant_fee' => ['sometimes', 'numeric', 'min:0'],
-            'activitable_data.planned_man_vacancies' => ['sometimes', 'nullable', 'integer', 'min:0'],
-            'activitable_data.planned_woman_vacancies' => ['sometimes', 'nullable', 'integer', 'min:0'],
-            'activitable_data.planned_couple_vacancies' => ['sometimes', 'nullable', 'integer', 'min:0'],
-            'activitable_data.raffle_man_vacancies' => ['sometimes', 'integer', 'min:0'],
-            'activitable_data.raffle_woman_vacancies' => ['sometimes', 'integer', 'min:0'],
-            'activitable_data.raffle_couple_vacancies' => ['sometimes', 'integer', 'min:0'],
-            'activitable_data.raffle_total_vacancies' => ['sometimes', 'integer', 'min:0'],
+            'activitable_data.planned_man_vacancies' => ['sometimes', 'integer', 'min:0'],
+            'activitable_data.planned_woman_vacancies' => ['sometimes', 'integer', 'min:0'],
+            'activitable_data.planned_couple_vacancies' => ['sometimes', 'integer', 'min:0'],
             'activitable_data.raffle_camper_subscription_start_date' => ['sometimes', 'date'],
             'activitable_data.raffle_camper_subscription_end_date' => ['sometimes', 'date'],
             'activitable_data.raffle_camper_date' => ['sometimes', 'date'],
@@ -63,8 +56,8 @@ class UpdateActivityRequest extends FormRequest
             'activitable_data.servant_payment_link' => ['sometimes', 'nullable', 'string', 'max:255'],
             'activitable_data.servant_payment_date' => ['sometimes', 'nullable', 'date'],
 
-            // Event fields
-            'activitable_data.is_paid_festival' => ['sometimes', 'boolean'],
+            // ── Event fields ──
+            'activitable_data.minimal_age' => ['sometimes', 'integer', 'min:0'],
             'activitable_data.ticket_price' => ['sometimes', 'integer', 'min:0'],
             'activitable_data.sale_start_date' => ['sometimes', 'date'],
             'activitable_data.payment_link' => ['sometimes', 'nullable', 'string', 'max:255'],

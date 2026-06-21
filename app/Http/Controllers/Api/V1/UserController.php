@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        return UserResource::collection(User::with('maritalStatus')->paginate());
+        return UserResource::collection(User::with(['maritalStatus', 'address'])->paginate());
     }
 
     public function store(StoreUserRequest $request): JsonResponse

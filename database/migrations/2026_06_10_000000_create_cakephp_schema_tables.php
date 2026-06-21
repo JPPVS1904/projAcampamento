@@ -201,6 +201,7 @@ return new class extends Migration
             $table->foreignId('spouse_id')->nullable()->constrained('users');
             $table->foreignId('sector_id')->nullable()->constrained('sectors');
             $table->foreignId('sector2_id')->nullable()->constrained('sectors');
+            $table->softDeletes();
         });
 
         Schema::create('pre_registrations', function (Blueprint $table) {

@@ -22,9 +22,12 @@ class UserResource extends JsonResource
             'sex' => $this->sex,
             'phone' => $this->phone,
             'email' => $this->email,
+            'photo' => $this->photo,
             'is_counselor' => $this->is_counselor,
+            'is_admin' => $this->is_admin,
             'marital_status_id' => $this->marital_status_id,
             'marital_status' => MaritalStatusResource::make($this->whenLoaded('maritalStatus')),
+            'address' => $this->whenLoaded('address'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -20,4 +20,19 @@ class PreRegistration extends Model
     'activity_id',
     'camping_pre_registration_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function activity()
+    {
+        return $this->belongsTo(Activity::class);
+    }
+
+    public function campingPreRegistration()
+    {
+        return $this->belongsTo(CampingPreRegistration::class);
+    }
 }

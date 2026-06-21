@@ -15,8 +15,12 @@ use App\Http\Controllers\Api\V1\OptionController;
 use App\Http\Controllers\Api\V1\PreRegistrationController;
 use App\Http\Controllers\Api\V1\QuestionController;
 use App\Http\Controllers\Api\V1\SectionController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
+use App\Models\PreRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::model('subscription', PreRegistration::class);
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -43,5 +47,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('pre-registrations', PreRegistrationController::class);
         Route::apiResource('questions', QuestionController::class);
         Route::apiResource('sections', SectionController::class);
+        Route::apiResource('subscriptions', SubscriptionController::class);
     });
 });
