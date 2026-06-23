@@ -21,8 +21,6 @@ class StoreSectorRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'place' => ['required', Rule::enum(Place::class)],
-            'base_vacancies' => ['required', 'integer', 'min:0'],
-            'raffle_vacancies' => ['required', 'integer', 'min:0'],
         ];
     }
 }

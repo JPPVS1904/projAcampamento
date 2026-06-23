@@ -21,8 +21,6 @@ class UpdateSectorRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'place' => ['sometimes', 'required', Rule::enum(Place::class)],
-            'base_vacancies' => ['sometimes', 'required', 'integer', 'min:0'],
-            'raffle_vacancies' => ['sometimes', 'required', 'integer', 'min:0'],
         ];
     }
 }

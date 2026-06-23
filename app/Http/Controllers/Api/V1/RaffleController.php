@@ -156,9 +156,9 @@ class RaffleController extends Controller
             });
 
             $results = [
-                'male' => $this->selectByRaffle($maleSingles, $camping->planned_man_vacancies),
-                'female' => $this->selectByRaffle($femaleSingles, $camping->planned_woman_vacancies),
-                'couple' => $this->selectByRaffle($couples, $camping->planned_couple_vacancies),
+                'male' => $this->selectByRaffle($maleSingles, $camping->planned_man_vacancies, $activity),
+                'female' => $this->selectByRaffle($femaleSingles, $camping->planned_woman_vacancies, $activity),
+                'couple' => $this->selectByRaffle($couples, $camping->planned_couple_vacancies, $activity),
             ];
 
             $totalSelected = $results['male']['selected'] + $results['female']['selected'] + $results['couple']['selected'];
@@ -318,6 +318,12 @@ class RaffleController extends Controller
                         'updated_at' => now(),
                     ]);
 
+                    \App\Models\InboxMessage::create([
+                        'user_id' => $sub->user_id,
+                        'title' => 'Você foi convocado!',
+                        'content' => "Parabéns! Você foi convocado(a) como Servo(a) no setor {$sectorData['sector_name']} para a atividade {$activity->name}. Acesse a aba Minhas Inscrições para mais detalhes."
+                    ]);
+
                     $totalSelected++;
                 }
             }
@@ -363,7 +369,7 @@ class RaffleController extends Controller
     /**
      * Select random subscribers and mark them as selected.
      */
-    private function selectByRaffle($subscribers, int $vacancies): array
+    private function selectByRaffle($subscribers, int $vacancies, Activity $activity): array
     {
         $shuffled = $subscribers->shuffle();
         $selected = $shuffled->take($vacancies);
@@ -376,6 +382,14 @@ class RaffleController extends Controller
                     'selection_method_id' => 1, // 1 = Sorteio
                     'substitute_position' => null,
                 ]);
+                
+                if ($sub->user_id) {
+                    \App\Models\InboxMessage::create([
+                        'user_id' => $sub->user_id,
+                        'title' => 'Você foi sorteado!',
+                        'content' => "Parabéns! Você foi sorteado(a) como Campista para a atividade {$activity->name}. Acesse a aba Minhas Inscrições para realizar o pagamento e confirmar sua vaga."
+                    ]);
+                }
             }
         }
 
