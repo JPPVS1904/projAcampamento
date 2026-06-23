@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\PreRegistrationController;
 use App\Http\Controllers\Api\V1\QuestionController;
 use App\Http\Controllers\Api\V1\SectionController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
+use App\Http\Controllers\Api\V1\RaffleController;
 use App\Models\PreRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,5 +49,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('questions', QuestionController::class);
         Route::apiResource('sections', SectionController::class);
         Route::apiResource('subscriptions', SubscriptionController::class);
+
+        // Raffle routes
+        Route::get('raffles', [RaffleController::class, 'index'])->name('raffles.index');
+        Route::post('raffles/{activity}/campers', [RaffleController::class, 'raffleCampers'])->name('raffles.campers');
     });
 });

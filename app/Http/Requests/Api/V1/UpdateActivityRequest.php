@@ -22,7 +22,7 @@ class UpdateActivityRequest extends FormRequest
         return [
             // Campos gerais da Activity
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'image' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'image' => ['sometimes', 'nullable', 'string'],
             'place' => ['sometimes', 'required', 'string', 'max:255'],
             'start_date' => ['sometimes', 'required', 'date'],
             'duration_days' => ['sometimes', 'required', 'integer', 'min:1'],

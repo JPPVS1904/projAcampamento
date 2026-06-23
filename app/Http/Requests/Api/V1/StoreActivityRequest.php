@@ -22,7 +22,7 @@ class StoreActivityRequest extends FormRequest
         return [
             // Campos gerais da Activity
             'name' => ['required', 'string', 'max:255'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'string'],
             'place' => ['required', 'string', 'max:255'],
             'start_date' => ['required', 'date'],
             'duration_days' => ['required', 'integer', 'min:1'],

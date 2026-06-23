@@ -52,7 +52,7 @@ return new class extends Migration
             $table->id();
             $table->string('notice', 255);
             $table->string('term', 255);
-            $table->string('image', 255);
+            $table->text('image');
             $table->integer('minimal_age');
             $table->integer('maximal_age');
             $table->decimal('camper_fee', 8, 2);
@@ -169,7 +169,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
-            $table->string('image', 255);
+            $table->text('image');
             $table->string('place', 255);
             $table->year('year');
             $table->dateTime('start_date');
@@ -201,7 +201,6 @@ return new class extends Migration
             $table->foreignId('spouse_id')->nullable()->constrained('users');
             $table->foreignId('sector_id')->nullable()->constrained('sectors');
             $table->foreignId('sector2_id')->nullable()->constrained('sectors');
-            $table->softDeletes();
         });
 
         Schema::create('pre_registrations', function (Blueprint $table) {

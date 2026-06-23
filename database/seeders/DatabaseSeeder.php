@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            // CampingSeeder::class,
+            CampingSeeder::class,
             UserSeeder::class,
         ]);
     }

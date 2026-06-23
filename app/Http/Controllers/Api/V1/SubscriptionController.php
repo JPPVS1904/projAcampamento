@@ -48,6 +48,34 @@ class SubscriptionController extends Controller
         // Support both activity_id and legacy event_id
         $activityId = $validated['activity_id'] ?? $validated['event_id'] ?? null;
 
+        if ($activityId) {
+            $user = \App\Models\User::find($validated['user_id']);
+            $activity = \App\Models\Activity::with('activitable')->find($activityId);
+            
+            if ($user && $activity && $user->birthday) {
+                $age = \Carbon\Carbon::parse($user->birthday)->age;
+                
+                if ($activity->activitable_type === 'App\Models\Camping') {
+                    $minAge = $activity->activitable->minimal_age;
+                    $maxAge = $activity->activitable->maximal_age;
+                    
+                    if ($age < $minAge || $age > $maxAge) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'user_id' => ['Idade inválida para este acampamento. A idade permitida é de ' . $minAge . ' a ' . $maxAge . ' anos.']
+                        ]);
+                    }
+                } elseif ($activity->activitable_type === 'App\Models\Event') {
+                    $minAge = $activity->activitable->minimal_age;
+                    
+                    if ($age < $minAge) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'user_id' => ['Idade inválida para este evento. A idade mínima é ' . $minAge . ' anos.']
+                        ]);
+                    }
+                }
+            }
+        }
+
         return DB::transaction(function () use ($validated, $activityId) {
             // Create camping_pre_registration first (required FK)
             $campingPreReg = CampingPreRegistration::create([
