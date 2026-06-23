@@ -14,4 +14,11 @@ class Category extends Model
         'name',
     'type'
     ];
+
+    public function sectors()
+    {
+        return $this->belongsToMany(Sector::class, 'categories_sectors')
+            ->withPivot('id', 'base_vacancies', 'raffle_vacancies')
+            ->withTimestamps();
+    }
 }

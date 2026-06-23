@@ -43,6 +43,8 @@ class SubscriptionController extends Controller
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'activity_id' => ['nullable', 'integer', 'exists:activities,id'],
             'event_id' => ['nullable', 'integer'],
+            'sector_id' => ['nullable', 'integer', 'exists:sectors,id'],
+            'sector2_id' => ['nullable', 'integer', 'exists:sectors,id'],
         ]);
 
         // Support both activity_id and legacy event_id
@@ -83,8 +85,8 @@ class SubscriptionController extends Controller
                 'is_quitter' => false,
                 'selection_method_id' => null,
                 'spouse_id' => null,
-                'sector_id' => null,
-                'sector2_id' => null,
+                'sector_id' => $validated['sector_id'] ?? null,
+                'sector2_id' => $validated['sector2_id'] ?? null,
             ]);
 
             $preRegistration = PreRegistration::create([

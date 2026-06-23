@@ -50,8 +50,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('sections', SectionController::class);
         Route::apiResource('subscriptions', SubscriptionController::class);
 
+        // Category Sectors
+        Route::get('categories/{category}/sectors', [\App\Http\Controllers\Api\V1\CategorySectorController::class, 'index'])->name('categories.sectors.index');
+        Route::post('categories/{category}/sectors', [\App\Http\Controllers\Api\V1\CategorySectorController::class, 'store'])->name('categories.sectors.store');
+        Route::put('categories/{category}/sectors/{sector}', [\App\Http\Controllers\Api\V1\CategorySectorController::class, 'update'])->name('categories.sectors.update');
+        Route::delete('categories/{category}/sectors/{sector}', [\App\Http\Controllers\Api\V1\CategorySectorController::class, 'destroy'])->name('categories.sectors.destroy');
+
         // Raffle routes
         Route::get('raffles', [RaffleController::class, 'index'])->name('raffles.index');
         Route::post('raffles/{activity}/campers', [RaffleController::class, 'raffleCampers'])->name('raffles.campers');
+        Route::post('raffles/{activity}/servants', [RaffleController::class, 'raffleServants'])->name('raffles.servants');
     });
 });
