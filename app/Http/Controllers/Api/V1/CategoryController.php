@@ -13,7 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return response()->json(Category::with('sectors')->get());
+        return response()->json(Category::with(['sectors', 'questions'])->get());
     }
 
     /**
@@ -34,7 +34,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return response()->json($category->load('sectors'));
+        return response()->json($category->load(['sectors', 'questions']));
     }
 
     /**

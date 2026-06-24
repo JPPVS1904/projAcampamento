@@ -51,6 +51,16 @@ class SubscriptionController extends Controller
         $activityId = $validated['activity_id'] ?? $validated['event_id'] ?? null;
 
         if ($activityId) {
+            $alreadySubscribed = \App\Models\PreRegistration::where('user_id', $validated['user_id'])
+                ->where('activity_id', $activityId)
+                ->exists();
+
+            if ($alreadySubscribed) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'activity_id' => ['Você já possui uma inscrição para esta atividade.']
+                ]);
+            }
+
             $user = \App\Models\User::find($validated['user_id']);
             $activity = \App\Models\Activity::with('activitable')->find($activityId);
             
@@ -153,6 +163,84 @@ class SubscriptionController extends Controller
                 }
                 if (!empty($campingData)) {
                     $subscription->campingPreRegistration->update($campingData);
+                }
+
+                // Lógica de Desistência e Convocação de Remanescente
+                if (isset($validated['is_quitter']) && $validated['is_quitter'] === true && $subscription->subscription_type === 'Servo') {
+                    $sectorUser = DB::table('categories_sectors_users')
+                        ->where('user_id', $subscription->user_id)
+                        ->where('activity_id', $subscription->activity_id)
+                        ->first();
+
+                    if ($sectorUser) {
+                        $sectorId = $sectorUser->categories_sectors_id;
+                        $pivot = DB::table('categories_sectors')->where('id', $sectorId)->first();
+                        $realSectorId = $pivot ? $pivot->sector_id : null;
+
+                        // Remove the quitter from the sector
+                        DB::table('categories_sectors_users')
+                            ->where('id', $sectorUser->id)
+                            ->delete();
+
+                        if ($realSectorId) {
+                            $allSubstitutes = PreRegistration::with(['campingPreRegistration', 'activity'])
+                                ->where('activity_id', $subscription->activity_id)
+                                ->where('subscription_type', 'Servo')
+                                ->whereHas('campingPreRegistration', function ($q) {
+                                    $q->whereNotNull('substitute_position')
+                                      ->where('is_quitter', false);
+                                })
+                                ->get()
+                                ->sortBy(function ($sub) {
+                                    return $sub->campingPreRegistration->substitute_position;
+                                });
+
+                            // Priority 1: Same sector preference
+                            $nextSub = $allSubstitutes->first(function ($sub) use ($realSectorId) {
+                                return $sub->campingPreRegistration->sector_id == $realSectorId;
+                            });
+
+                            // Priority 2: No sector preference (null)
+                            if (!$nextSub) {
+                                $nextSub = $allSubstitutes->first(function ($sub) {
+                                    return $sub->campingPreRegistration->sector_id === null;
+                                });
+                            }
+
+                            // Priority 3: Any other
+                            if (!$nextSub) {
+                                $nextSub = $allSubstitutes->first();
+                            }
+
+                            if ($nextSub) {
+                                // Mark substitute as selected
+                                $nextSub->campingPreRegistration->update([
+                                    'selection_method_id' => 1,
+                                    'substitute_position' => null,
+                                ]);
+
+                                // Insert substitute into the sector
+                                DB::table('categories_sectors_users')->insert([
+                                    'user_id' => $nextSub->user_id,
+                                    'categories_sectors_id' => $sectorId,
+                                    'activity_id' => $subscription->activity_id,
+                                    'is_coordinator' => false,
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]);
+
+                                // Notify substitute
+                                $activityName = $subscription->activity->name ?? 'Acampamento';
+                                $sectorName = DB::table('sectors')->where('id', $realSectorId)->value('name') ?? 'um setor';
+
+                                \App\Models\InboxMessage::create([
+                                    'user_id' => $nextSub->user_id,
+                                    'title' => 'Você foi convocado (Remanescente)!',
+                                    'content' => "Boas notícias! Uma vaga surgiu e você foi convocado(a) como Servo(a) no setor {$sectorName} para a atividade {$activityName}. Acesse a aba Minhas Inscrições para mais detalhes."
+                                ]);
+                            }
+                        }
+                    }
                 }
             }
         });

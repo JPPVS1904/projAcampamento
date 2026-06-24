@@ -33,6 +33,11 @@ class PreRegistration extends Model
 
     public function campingPreRegistration()
     {
-        return $this->belongsTo(CampingPreRegistration::class);
+        return $this->belongsTo(CampingPreRegistration::class, 'camping_pre_registration_id');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'pre_registration_id');
     }
 }

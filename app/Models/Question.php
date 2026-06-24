@@ -12,10 +12,15 @@ class Question extends Model
 
     protected $fillable = [
         'text',
-    'order',
-    'type',
-    'accept_generic_answer',
-    'section_id',
-    'depends_on_option_id'
+        'order',
+        'type',
+        'accept_generic_answer',
+        'section_id',
+        'depends_on_option_id'
     ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'categories_questions');
+    }
 }

@@ -56,10 +56,20 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('categories/{category}/sectors/{sector}', [\App\Http\Controllers\Api\V1\CategorySectorController::class, 'update'])->name('categories.sectors.update');
         Route::delete('categories/{category}/sectors/{sector}', [\App\Http\Controllers\Api\V1\CategorySectorController::class, 'destroy'])->name('categories.sectors.destroy');
 
+        // Category Questions
+        Route::get('categories/{category}/questions', [\App\Http\Controllers\Api\V1\CategoryQuestionController::class, 'index'])->name('categories.questions.index');
+        Route::post('categories/{category}/questions', [\App\Http\Controllers\Api\V1\CategoryQuestionController::class, 'store'])->name('categories.questions.store');
+        Route::delete('categories/{category}/questions/{question}', [\App\Http\Controllers\Api\V1\CategoryQuestionController::class, 'destroy'])->name('categories.questions.destroy');
+
         // Raffle routes
         Route::get('raffles', [RaffleController::class, 'index'])->name('raffles.index');
+        Route::get('raffles/{activity}/list', [RaffleController::class, 'listRaffle'])->name('raffles.list');
         Route::post('raffles/{activity}/campers', [RaffleController::class, 'raffleCampers'])->name('raffles.campers');
         Route::post('raffles/{activity}/servants', [RaffleController::class, 'raffleServants'])->name('raffles.servants');
+        // Review Panel
+        Route::get('reviews', [\App\Http\Controllers\Api\V1\ReviewController::class, 'index'])->name('reviews.index');
+        Route::post('reviews/{id}/approve', [\App\Http\Controllers\Api\V1\ReviewController::class, 'approve'])->name('reviews.approve');
+        Route::post('reviews/{id}/reject', [\App\Http\Controllers\Api\V1\ReviewController::class, 'reject'])->name('reviews.reject');
 
         // Inbox Messages
         Route::get('inbox-messages', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'index'])->name('inbox-messages.index');

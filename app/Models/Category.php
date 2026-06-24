@@ -21,4 +21,10 @@ class Category extends Model
             ->withPivot('id', 'base_vacancies', 'raffle_vacancies')
             ->withTimestamps();
     }
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'categories_questions')
+            ->withTimestamps();
+    }
 }

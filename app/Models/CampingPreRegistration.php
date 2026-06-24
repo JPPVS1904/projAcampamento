@@ -16,10 +16,15 @@ class CampingPreRegistration extends Model
 
     protected $fillable = [
         'substitute_position',
-    'is_quitter',
-    'selection_method_id',
-    'spouse_id',
-    'sector_id',
-    'sector2_id'
+        'is_quitter',
+        'selection_method_id',
+        'spouse_id',
+        'sector_id',
+        'sector2_id'
     ];
+
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class);
+    }
 }

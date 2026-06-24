@@ -15,12 +15,16 @@ class RaffleController extends Controller
     /**
      * List active campings with their raffle status.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $activities = Activity::with(['activitable', 'category.sectors'])
-            ->where('activitable_type', Camping::class)
-            ->whereRaw('DATE_ADD(start_date, INTERVAL duration_days DAY) >= ?', [now()])
-            ->get();
+        $query = Activity::with(['activitable', 'category.sectors'])
+            ->where('activitable_type', Camping::class);
+
+        if (!$request->boolean('include_past')) {
+            $query->whereRaw('DATE_ADD(start_date, INTERVAL duration_days DAY) >= ?', [now()]);
+        }
+
+        $activities = $query->orderBy('start_date', 'desc')->get();
 
         $result = $activities->map(function ($activity) {
             $camping = $activity->activitable;
@@ -257,29 +261,7 @@ class RaffleController extends Controller
             }
             unset($sectorData);
 
-            // === PHASE 2: 2nd preference ===
-            foreach ($sectorVacancies as $sectorId => &$sectorData) {
-                if ($sectorData['remaining'] <= 0) continue;
-
-                $preferring2nd = $allServantSubs->filter(function ($sub) use ($sectorId, $selectedIds) {
-                    return !$selectedIds->contains($sub->id) &&
-                        $sub->campingPreRegistration &&
-                        $sub->campingPreRegistration->sector2_id == $sectorId;
-                });
-
-                $sectorData['subscribers_2nd'] = $preferring2nd->count();
-                $shuffled = $preferring2nd->shuffle();
-                $toSelect = $shuffled->take($sectorData['remaining']);
-
-                foreach ($toSelect as $sub) {
-                    $selectedIds->push($sub->id);
-                    $sectorData['selected'][] = $sub->id;
-                    $sectorData['remaining']--;
-                }
-            }
-            unset($sectorData);
-
-            // === PHASE 3: Fill remaining vacancies with unassigned servants ===
+            // === PHASE 2: Fill remaining vacancies with unassigned servants ===
             $unassigned = $allServantSubs->filter(function ($sub) use ($selectedIds) {
                 return !$selectedIds->contains($sub->id);
             })->shuffle();
@@ -408,5 +390,40 @@ class RaffleController extends Controller
             'selected' => $selected->count(),
             'substitutes' => $substitutes->count(),
         ];
+    }
+
+    /**
+     * List all subscribers for an activity's raffle.
+     */
+    public function listRaffle(Request $request, int $activityId): JsonResponse
+    {
+        $type = $request->query('type', 'Servo'); // Servo or Campista
+
+        $subscribers = PreRegistration::with(['user', 'campingPreRegistration.sector'])
+            ->where('activity_id', $activityId)
+            ->where('subscription_type', $type)
+            ->get()
+            ->map(function ($sub) {
+                return [
+                    'id' => $sub->id,
+                    'name' => $sub->user->name ?? 'Desconhecido',
+                    'email' => $sub->user->email ?? '',
+                    'phone' => $sub->user->phone ?? '',
+                    'preferred_sector' => $sub->campingPreRegistration && $sub->campingPreRegistration->sector 
+                        ? $sub->campingPreRegistration->sector->name 
+                        : 'Sem preferência',
+                    'is_selected' => $sub->campingPreRegistration && $sub->campingPreRegistration->selection_method_id !== null,
+                    'substitute_position' => $sub->campingPreRegistration ? $sub->campingPreRegistration->substitute_position : null,
+                    'is_confirmed' => $sub->is_fee_paid,
+                    'is_quitter' => $sub->campingPreRegistration ? $sub->campingPreRegistration->is_quitter : false,
+                ];
+            })
+            ->sortBy(function ($sub) {
+                if ($sub['is_selected']) return 0;
+                return $sub['substitute_position'] ?? 999999;
+            })
+            ->values();
+
+        return response()->json(['data' => $subscribers]);
     }
 }

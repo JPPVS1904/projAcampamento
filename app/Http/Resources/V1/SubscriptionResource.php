@@ -26,6 +26,8 @@ class SubscriptionResource extends JsonResource
                 : false,
             'substitute_position' => $campingPreReg->substitute_position ?? null,
             'is_quitter' => $campingPreReg ? (bool) ($campingPreReg->is_quitter ?? false) : false,
+            'is_approved' => $campingPreReg ? (bool) ($campingPreReg->is_approved ?? false) : false,
+            'has_answered_form' => $this->answers()->exists(),
             'payment_code' => $this->payment_code,
             'qrcode_data' => $this->qrcode_data,
             'used_qrcode' => (bool) $this->is_qrcode_used,

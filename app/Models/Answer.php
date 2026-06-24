@@ -15,4 +15,14 @@ class Answer extends Model
     'question_id',
     'answer'
     ];
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
+    }
+
+    public function preRegistration()
+    {
+        return $this->belongsTo(PreRegistration::class);
+    }
 }
