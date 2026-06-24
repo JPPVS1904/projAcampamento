@@ -126,7 +126,7 @@ class RaffleController extends Controller
             return response()->json(['message' => 'O sorteio de campistas já foi realizado para este acampamento.'], 422);
         }
 
-        return DB::transaction(function () use ($activityId, $camping) {
+        return DB::transaction(function () use ($activityId, $camping, $activity) {
             // Get all camper pre-registrations with user data
             $allCamperSubs = PreRegistration::with(['user', 'campingPreRegistration'])
                 ->where('activity_id', $activityId)

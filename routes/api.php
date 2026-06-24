@@ -65,5 +65,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('inbox-messages', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'index'])->name('inbox-messages.index');
         Route::put('inbox-messages/read-all', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'markAllAsRead'])->name('inbox-messages.read-all');
         Route::put('inbox-messages/{id}/read', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'markAsRead'])->name('inbox-messages.read');
+        Route::delete('inbox-messages/{id}', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'destroy'])->name('inbox-messages.destroy');
     });
 });

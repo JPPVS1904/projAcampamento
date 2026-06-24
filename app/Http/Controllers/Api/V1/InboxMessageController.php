@@ -29,4 +29,11 @@ class InboxMessageController extends Controller
             ->update(['is_read' => true]);
         return response()->json(['message' => 'All messages marked as read']);
     }
+
+    public function destroy(Request $request, $id)
+    {
+        $message = \App\Models\InboxMessage::where('user_id', $request->user()->id)->findOrFail($id);
+        $message->delete();
+        return response()->json(['message' => 'Message deleted successfully']);
+    }
 }
