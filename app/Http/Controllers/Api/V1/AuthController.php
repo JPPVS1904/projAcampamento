@@ -34,10 +34,7 @@ class AuthController extends Controller
 
         $remember = $request->boolean('remember');
 
-        if ($remember) {
-            $user->remember_token = \Illuminate\Support\Str::random(60);
-            $user->save();
-        }
+        // remember_token column saving removed
 
         $user->tokens()->delete();
         
