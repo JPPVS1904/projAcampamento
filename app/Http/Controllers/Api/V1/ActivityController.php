@@ -32,6 +32,8 @@ class ActivityController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
+        $query->orderBy('start_date', 'desc');
+
         return ActivityResource::collection($query->paginate($request->input('per_page', 100)));
     }
 
