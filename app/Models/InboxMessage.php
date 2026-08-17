@@ -11,6 +11,8 @@ class InboxMessage extends Model
         'title',
         'content',
         'is_read',
+        'action_type',
+        'action_id',
     ];
 
     protected $casts = [

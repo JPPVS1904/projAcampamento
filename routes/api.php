@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\QuestionController;
 use App\Http\Controllers\Api\V1\SectionController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\RaffleController;
+use App\Http\Controllers\Api\V1\CoupleInvitationController;
 use App\Models\PreRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -76,5 +77,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('inbox-messages/read-all', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'markAllAsRead'])->name('inbox-messages.read-all');
         Route::put('inbox-messages/{id}/read', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'markAsRead'])->name('inbox-messages.read');
         Route::delete('inbox-messages/{id}', [\App\Http\Controllers\Api\V1\InboxMessageController::class, 'destroy'])->name('inbox-messages.destroy');
+
+        // Couple Invitations
+        Route::post('couple-invitations', [CoupleInvitationController::class, 'store'])->name('couple-invitations.store');
+        Route::post('couple-invitations/{id}/accept', [CoupleInvitationController::class, 'accept'])->name('couple-invitations.accept');
+        Route::post('couple-invitations/{id}/reject', [CoupleInvitationController::class, 'reject'])->name('couple-invitations.reject');
     });
 });
