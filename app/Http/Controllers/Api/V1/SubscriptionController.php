@@ -22,10 +22,15 @@ class SubscriptionController extends Controller
             'activity.activitable',
             'activity.category',
             'campingPreRegistration',
+            'user'
         ]);
 
         if ($request->has('user_id')) {
             $query->where('user_id', $request->input('user_id'));
+        }
+
+        if ($request->has('activity_id')) {
+            $query->where('activity_id', $request->input('activity_id'));
         }
 
         return SubscriptionResource::collection(

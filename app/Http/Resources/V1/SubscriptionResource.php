@@ -32,6 +32,7 @@ class SubscriptionResource extends JsonResource
             'qrcode_data' => $this->qrcode_data,
             'used_qrcode' => (bool) $this->is_qrcode_used,
             'user_id' => $this->user_id,
+            'user' => $this->whenLoaded('user'),
             'activity_id' => $this->activity_id,
             'event' => $this->when($activity, function () use ($activity) {
                 return [

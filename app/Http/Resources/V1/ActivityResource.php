@@ -23,6 +23,7 @@ class ActivityResource extends JsonResource
             'start_date' => $this->start_date,
             'duration_days' => $this->duration_days,
             'total_vacancies' => $this->total_vacancies,
+            'pre_registrations_count' => $this->pre_registrations_count ?? 0,
             'category_id' => $this->category_id,
             'category' => $this->whenLoaded('category'),
             'activitable_type' => $this->activitable_type,

@@ -23,7 +23,7 @@ class ActivityController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Activity::with(['activitable', 'category']);
+        $query = Activity::with(['activitable', 'category'])->withCount('preRegistrations');
 
         if ($request->boolean('available')) {
             $query->whereRaw('DATE_ADD(start_date, INTERVAL duration_days DAY) >= ?', [now()]);
