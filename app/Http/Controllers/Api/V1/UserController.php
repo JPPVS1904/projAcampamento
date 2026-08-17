@@ -13,9 +13,19 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(\Illuminate\Http\Request $request): AnonymousResourceCollection
     {
-        return UserResource::collection(User::with(['maritalStatus', 'address'])->paginate());
+        $query = User::with(['maritalStatus', 'address']);
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('cpf', 'like', "%{$search}%");
+            });
+        }
+
+        return UserResource::collection($query->paginate());
     }
 
     public function store(StoreUserRequest $request): JsonResponse

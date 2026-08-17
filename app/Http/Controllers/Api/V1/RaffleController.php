@@ -177,10 +177,10 @@ class RaffleController extends Controller
     /**
      * Perform the servant raffle for a given activity.
      *
-     * 3-phase raffle:
-     * 1. Assign servants to their 1st sector preference
-     * 2. Assign remaining servants to their 2nd sector preference
-     * 3. Fill remaining sector vacancies with unassigned servants
+     * 2-phase raffle:
+     * 1. Assign servants to their 1st sector preference (sector_id)
+     * 2. Assign remaining servants to their 2nd sector preference (sector2_id)
+     * Servants not selected in these two phases become substitutes and are not assigned randomly.
      */
     public function raffleServants(Request $request, int $activityId): JsonResponse
     {
@@ -261,16 +261,21 @@ class RaffleController extends Controller
             }
             unset($sectorData);
 
-            // === PHASE 2: Fill remaining vacancies with unassigned servants ===
-            $unassigned = $allServantSubs->filter(function ($sub) use ($selectedIds) {
-                return !$selectedIds->contains($sub->id);
-            })->shuffle();
-
+            // === PHASE 2: 2nd preference ===
             foreach ($sectorVacancies as $sectorId => &$sectorData) {
-                if ($sectorData['remaining'] <= 0 || $unassigned->isEmpty()) continue;
+                if ($sectorData['remaining'] <= 0) continue;
 
-                $toSelect = $unassigned->splice(0, $sectorData['remaining']);
-                foreach ($toSelect as $sub) {
+                $preferring2nd = $allServantSubs->filter(function ($sub) use ($sectorId, $selectedIds) {
+                    return !$selectedIds->contains($sub->id) &&
+                        $sub->campingPreRegistration &&
+                        $sub->campingPreRegistration->sector2_id == $sectorId;
+                });
+
+                $sectorData['subscribers_2nd'] = $preferring2nd->count();
+                $shuffled2nd = $preferring2nd->shuffle();
+                $toSelect2nd = $shuffled2nd->take($sectorData['remaining']);
+
+                foreach ($toSelect2nd as $sub) {
                     $selectedIds->push($sub->id);
                     $sectorData['selected'][] = $sub->id;
                     $sectorData['remaining']--;

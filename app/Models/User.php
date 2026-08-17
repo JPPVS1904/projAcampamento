@@ -33,6 +33,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = [
+        'masked_cpf',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -56,5 +60,19 @@ class User extends Authenticatable
     public function preRegistrations()
     {
         return $this->hasMany(PreRegistration::class);
+    }
+
+    public function getMaskedCpfAttribute(): ?string
+    {
+        if (!$this->cpf) {
+            return null;
+        }
+
+        $cleaned = preg_replace('/\D/', '', $this->cpf);
+        if (strlen($cleaned) !== 11) {
+            return $this->cpf;
+        }
+
+        return substr($cleaned, 0, 3) . '.###.###-' . substr($cleaned, 9, 2);
     }
 }

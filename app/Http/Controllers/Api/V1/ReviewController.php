@@ -22,13 +22,20 @@ class ReviewController extends Controller
             ->where('activity_id', $request->activity_id)
             ->where('subscription_type', 'Campista')
             ->whereHas('campingPreRegistration', function ($q) {
-                // Must not be a quitter, and not yet approved
-                $q->where('is_quitter', false)
-                  ->where('is_approved', false);
+                // Must not be a quitter, allow approved and unapproved
+                $q->where('is_quitter', false);
             })
             ->whereHas('answers'); // Must have submitted answers
 
-        return response()->json(['data' => $query->get()]);
+        if ($search = $request->input('search')) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('cpf', 'like', "%{$search}%");
+            });
+        }
+
+        return response()->json($query->paginate(20));
     }
 
     /**

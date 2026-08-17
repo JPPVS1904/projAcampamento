@@ -23,4 +23,9 @@ class Question extends Model
     {
         return $this->belongsToMany(Category::class, 'categories_questions');
     }
+
+    public function options()
+    {
+        return $this->hasMany(Option::class);
+    }
 }

@@ -28,6 +28,9 @@ class ActivityController extends Controller
         if ($request->boolean('available')) {
             $query->whereRaw('DATE_ADD(start_date, INTERVAL duration_days DAY) >= ?', [now()]);
         }
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
 
         return ActivityResource::collection($query->paginate($request->input('per_page', 100)));
     }

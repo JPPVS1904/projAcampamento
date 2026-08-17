@@ -41,6 +41,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CampingSeeder::class,
             UserSeeder::class,
+            SectorSeeder::class,
+            QuestionSeeder::class,
         ]);
     }
 }

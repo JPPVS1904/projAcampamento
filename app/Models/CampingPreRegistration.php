@@ -20,7 +20,9 @@ class CampingPreRegistration extends Model
         'selection_method_id',
         'spouse_id',
         'sector_id',
-        'sector2_id'
+        'sector2_id',
+        'is_approved',
+        'has_answered_form'
     ];
 
     public function sector()

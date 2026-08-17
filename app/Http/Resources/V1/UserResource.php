@@ -17,6 +17,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'cpf' => $this->cpf,
+            'masked_cpf' => $this->masked_cpf,
             'name' => $this->name,
             'birthday' => $this->birthday,
             'sex' => $this->sex,

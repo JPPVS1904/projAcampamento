@@ -62,27 +62,65 @@ class SubscriptionController extends Controller
             }
 
             $user = \App\Models\User::find($validated['user_id']);
-            $activity = \App\Models\Activity::with('activitable')->find($activityId);
+            $activity = \App\Models\Activity::with(['activitable', 'category'])->find($activityId);
             
-            if ($user && $activity && $user->birthday) {
-                $age = \Carbon\Carbon::parse($user->birthday)->age;
-                
-                if ($activity->activitable_type === 'App\Models\Camping') {
-                    $minAge = $activity->activitable->minimal_age;
-                    $maxAge = $activity->activitable->maximal_age;
+            if ($user && $activity) {
+                if ($user->birthday) {
+                    $age = \Carbon\Carbon::parse($user->birthday)->age;
                     
-                    if ($age < $minAge || $age > $maxAge) {
-                        throw \Illuminate\Validation\ValidationException::withMessages([
-                            'user_id' => ['Idade inválida para este acampamento. A idade permitida é de ' . $minAge . ' a ' . $maxAge . ' anos.']
-                        ]);
+                    if ($activity->activitable_type === 'App\Models\Camping') {
+                        $minAge = $activity->activitable->minimal_age;
+                        $maxAge = $activity->activitable->maximal_age;
+                        
+                        if ($age < $minAge || $age > $maxAge) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'user_id' => ['Idade inválida para este acampamento. A idade permitida é de ' . $minAge . ' a ' . $maxAge . ' anos.']
+                            ]);
+                        }
+                    } elseif ($activity->activitable_type === 'App\Models\Event') {
+                        $minAge = $activity->activitable->minimal_age;
+                        
+                        if ($age < $minAge) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'user_id' => ['Idade inválida para este evento. A idade mínima é ' . $minAge . ' anos.']
+                            ]);
+                        }
                     }
-                } elseif ($activity->activitable_type === 'App\Models\Event') {
-                    $minAge = $activity->activitable->minimal_age;
+                }
+
+                if ($validated['subscription_type'] === 'Servo' && $activity->category) {
+                    $categoryWeights = [
+                        'Acampamento Mirim' => 1,
+                        'FAC' => 2,
+                        'Acampamento Juvenil' => 3,
+                        'Acampamento Sênior' => 4,
+                        'Acampamento Casais' => 4,
+                    ];
+
+                    $targetCategoryName = $activity->category->name;
                     
-                    if ($age < $minAge) {
-                        throw \Illuminate\Validation\ValidationException::withMessages([
-                            'user_id' => ['Idade inválida para este evento. A idade mínima é ' . $minAge . ' anos.']
-                        ]);
+                    if (array_key_exists($targetCategoryName, $categoryWeights)) {
+                        $targetWeight = $categoryWeights[$targetCategoryName];
+                        
+                        $validCategoryNames = array_keys(array_filter($categoryWeights, function($weight) use ($targetWeight) {
+                            return $weight >= $targetWeight;
+                        }));
+
+                        $hasValidParticipation = \App\Models\PreRegistration::where('user_id', $validated['user_id'])
+                            ->whereHas('campingPreRegistration', function($query) {
+                                $query->whereNotNull('selection_method_id')
+                                      ->where('is_quitter', false);
+                            })
+                            ->whereHas('activity.category', function($query) use ($validCategoryNames) {
+                                $query->whereIn('name', $validCategoryNames);
+                            })
+                            ->exists();
+
+                        if (!$hasValidParticipation) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'subscription_type' => ['Para se inscrever como Servo, é necessário ter participado de um acampamento de mesma categoria ou superior.']
+                            ]);
+                        }
                     }
                 }
             }
