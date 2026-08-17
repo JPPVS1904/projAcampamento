@@ -128,6 +128,25 @@ class SubscriptionController extends Controller
                         }
                     }
                 }
+
+                if ($validated['subscription_type'] === 'Campista' && $activity->category) {
+                    $hasParticipatedAsCamper = \App\Models\PreRegistration::where('user_id', $validated['user_id'])
+                        ->where('subscription_type', 'Campista')
+                        ->whereHas('campingPreRegistration', function($query) {
+                            $query->whereNotNull('selection_method_id')
+                                  ->where('is_quitter', false);
+                        })
+                        ->whereHas('activity', function($query) use ($activity) {
+                            $query->where('category_id', $activity->category_id);
+                        })
+                        ->exists();
+
+                    if ($hasParticipatedAsCamper) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            'subscription_type' => ['Você já participou de um acampamento desta categoria como campista e não pode se inscrever novamente.']
+                        ]);
+                    }
+                }
             }
         }
 
@@ -238,22 +257,11 @@ class SubscriptionController extends Controller
                                     return $sub->campingPreRegistration->substitute_position;
                                 });
 
-                            // Priority 1: Same sector preference
+                            // Priority: Must have chosen this sector as 1st or 2nd option
                             $nextSub = $allSubstitutes->first(function ($sub) use ($realSectorId) {
-                                return $sub->campingPreRegistration->sector_id == $realSectorId;
+                                return $sub->campingPreRegistration->sector_id == $realSectorId ||
+                                       $sub->campingPreRegistration->sector2_id == $realSectorId;
                             });
-
-                            // Priority 2: No sector preference (null)
-                            if (!$nextSub) {
-                                $nextSub = $allSubstitutes->first(function ($sub) {
-                                    return $sub->campingPreRegistration->sector_id === null;
-                                });
-                            }
-
-                            // Priority 3: Any other
-                            if (!$nextSub) {
-                                $nextSub = $allSubstitutes->first();
-                            }
 
                             if ($nextSub) {
                                 // Mark substitute as selected
