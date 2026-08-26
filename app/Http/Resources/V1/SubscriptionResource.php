@@ -24,6 +24,7 @@ class SubscriptionResource extends JsonResource
             'was_selected' => $campingPreReg && isset($campingPreReg->selection_method_id)
                 ? $campingPreReg->selection_method_id !== null
                 : false,
+            'selection_method_id' => $campingPreReg->selection_method_id ?? null,
             'substitute_position' => $campingPreReg->substitute_position ?? null,
             'is_quitter' => $campingPreReg ? (bool) ($campingPreReg->is_quitter ?? false) : false,
             'is_approved' => $campingPreReg ? (bool) ($campingPreReg->is_approved ?? false) : false,

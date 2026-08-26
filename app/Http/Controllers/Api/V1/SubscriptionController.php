@@ -33,6 +33,12 @@ class SubscriptionController extends Controller
             $query->where('activity_id', $request->input('activity_id'));
         }
 
+        if ($request->has('was_selected') && $request->input('was_selected') === 'true') {
+            $query->whereHas('campingPreRegistration', function($q) {
+                $q->whereNotNull('selection_method_id');
+            });
+        }
+
         return SubscriptionResource::collection(
             $query->paginate($request->input('per_page', 100))
         );
@@ -197,10 +203,14 @@ class SubscriptionController extends Controller
             'subscription_type' => ['sometimes', 'string', 'in:Servo,Campista,Participante'],
             'paid_the_fee' => ['sometimes', 'boolean'],
             'was_selected' => ['sometimes', 'boolean'],
+            'selection_method_id' => ['sometimes', 'nullable', 'integer', 'exists:selection_methods,id'],
             'is_quitter' => ['sometimes', 'boolean'],
         ]);
 
-        DB::transaction(function () use ($validated, $subscription) {
+        $previouslyWasSelected = $subscription->campingPreRegistration && $subscription->campingPreRegistration->selection_method_id !== null;
+        $previouslyPaidFee = $subscription->is_fee_paid;
+
+        DB::transaction(function () use ($validated, $subscription, $previouslyWasSelected, $previouslyPaidFee) {
             // Update pre_registration fields
             $preRegData = [];
             if (isset($validated['subscription_type'])) {
@@ -217,14 +227,33 @@ class SubscriptionController extends Controller
             if ($subscription->campingPreRegistration) {
                 $campingData = [];
                 if (isset($validated['was_selected'])) {
-                    // If was_selected is true, assign selection_method_id = 1 (Sorteio)
-                    $campingData['selection_method_id'] = $validated['was_selected'] ? 1 : null;
+                    if ($validated['was_selected']) {
+                        $campingData['selection_method_id'] = $validated['selection_method_id'] ?? 1;
+                    } else {
+                        $campingData['selection_method_id'] = null;
+                    }
+                } elseif (array_key_exists('selection_method_id', $validated)) {
+                    $campingData['selection_method_id'] = $validated['selection_method_id'];
                 }
+                
                 if (isset($validated['is_quitter'])) {
                     $campingData['is_quitter'] = $validated['is_quitter'];
                 }
                 if (!empty($campingData)) {
                     $subscription->campingPreRegistration->update($campingData);
+                }
+
+                $subscription->refresh();
+                $currentlyWasSelected = $subscription->campingPreRegistration && $subscription->campingPreRegistration->selection_method_id !== null;
+                $currentlyPaidFee = $subscription->is_fee_paid;
+
+                if ($currentlyWasSelected && $currentlyPaidFee && !($previouslyWasSelected && $previouslyPaidFee)) {
+                    $activityName = $subscription->activity->name ?? 'Acampamento';
+                    \App\Models\InboxMessage::create([
+                        'user_id' => $subscription->user_id,
+                        'title' => 'Formulário de Inscrição Disponível',
+                        'content' => "Sua inscrição para a atividade {$activityName} foi aprovada e confirmada! Acesse a aba Minhas Inscrições e clique em 'Prosseguir com a inscrição' para preencher o formulário obrigatório."
+                    ]);
                 }
 
                 // Lógica de Desistência e Convocação de Remanescente
