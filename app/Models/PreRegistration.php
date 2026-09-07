@@ -18,7 +18,15 @@ class PreRegistration extends Model
     'is_qrcode_used',
     'user_id',
     'activity_id',
-    'camping_pre_registration_id'
+    'camping_pre_registration_id',
+    'is_form_returned',
+    'return_instructions',
+    'returned_fields'
+    ];
+
+    protected $casts = [
+        'returned_fields' => 'array',
+        'is_form_returned' => 'boolean',
     ];
 
     public function user()

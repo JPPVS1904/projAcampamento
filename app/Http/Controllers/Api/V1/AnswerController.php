@@ -13,7 +13,7 @@ class AnswerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Answer::query();
+        $query = Answer::with('question');
         if ($request->has('pre_registration_id')) {
             $query->where('pre_registration_id', $request->pre_registration_id);
         }
@@ -52,6 +52,14 @@ class AnswerController extends Controller
                 'is_approved' => false,
                 'is_quitter' => false,
                 'selection_method_id' => null
+            ]);
+        }
+
+        if ($preReg->is_form_returned) {
+            $preReg->update([
+                'is_form_returned' => false,
+                'return_instructions' => null,
+                'returned_fields' => null,
             ]);
         }
 

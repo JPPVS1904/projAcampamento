@@ -344,4 +344,31 @@ class SubscriptionController extends Controller
 
         return response()->noContent();
     }
+
+    /**
+     * Devolver formulário para o usuário corrigir.
+     */
+    public function returnForm(Request $request, PreRegistration $subscription): Response
+    {
+        $validated = $request->validate([
+            'return_instructions' => ['required', 'string'],
+            'returned_fields' => ['required', 'array'],
+            'returned_fields.*' => ['integer'],
+        ]);
+
+        $subscription->update([
+            'is_form_returned' => true,
+            'return_instructions' => $validated['return_instructions'],
+            'returned_fields' => $validated['returned_fields'],
+        ]);
+
+        $activityName = $subscription->activity->name ?? 'Acampamento';
+        \App\Models\InboxMessage::create([
+            'user_id' => $subscription->user_id,
+            'title' => 'Formulário Devolvido',
+            'content' => "Seu formulário para a atividade {$activityName} foi devolvido para correção.\n\n{$validated['return_instructions']}.\n\nAcesse a aba 'Minhas Inscrições' para alterar seu formulário.",
+        ]);
+
+        return response()->noContent();
+    }
 }

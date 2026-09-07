@@ -49,6 +49,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('pre-registrations', PreRegistrationController::class);
         Route::apiResource('questions', QuestionController::class);
         Route::apiResource('sections', SectionController::class);
+        Route::post('subscriptions/{subscription}/return-form', [SubscriptionController::class, 'returnForm'])->name('subscriptions.return-form');
         Route::apiResource('subscriptions', SubscriptionController::class);
 
         // Category Sectors
