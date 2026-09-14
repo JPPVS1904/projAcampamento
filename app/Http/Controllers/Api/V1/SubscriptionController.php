@@ -207,10 +207,7 @@ class SubscriptionController extends Controller
             'is_quitter' => ['sometimes', 'boolean'],
         ]);
 
-        $previouslyWasSelected = $subscription->campingPreRegistration && $subscription->campingPreRegistration->selection_method_id !== null;
-        $previouslyPaidFee = $subscription->is_fee_paid;
-
-        DB::transaction(function () use ($validated, $subscription, $previouslyWasSelected, $previouslyPaidFee) {
+        DB::transaction(function () use ($validated, $subscription) {
             // Update pre_registration fields
             $preRegData = [];
             if (isset($validated['subscription_type'])) {
@@ -243,18 +240,7 @@ class SubscriptionController extends Controller
                     $subscription->campingPreRegistration->update($campingData);
                 }
 
-                $subscription->refresh();
-                $currentlyWasSelected = $subscription->campingPreRegistration && $subscription->campingPreRegistration->selection_method_id !== null;
-                $currentlyPaidFee = $subscription->is_fee_paid;
-
-                if ($currentlyWasSelected && $currentlyPaidFee && !($previouslyWasSelected && $previouslyPaidFee)) {
-                    $activityName = $subscription->activity->name ?? 'Acampamento';
-                    \App\Models\InboxMessage::create([
-                        'user_id' => $subscription->user_id,
-                        'title' => 'Formulário de Inscrição Disponível',
-                        'content' => "Sua inscrição para a atividade {$activityName} foi aprovada e confirmada! Acesse a aba Minhas Inscrições e clique em 'Prosseguir com a inscrição' para preencher o formulário obrigatório."
-                    ]);
-                }
+                $this->checkAndConfirmSubscription($subscription);
 
                 // Lógica de Desistência e Convocação de Remanescente
                 if (isset($validated['is_quitter']) && $validated['is_quitter'] === true && $subscription->subscription_type === 'Servo') {
@@ -343,6 +329,65 @@ class SubscriptionController extends Controller
         });
 
         return response()->noContent();
+    }
+
+    public function pay(Request $request, PreRegistration $subscription): Response
+    {
+        $subscription->update(['is_fee_paid' => true]);
+        $this->checkAndConfirmSubscription($subscription);
+        return response()->noContent();
+    }
+
+    public function uploadPhoto(Request $request, PreRegistration $subscription): Response
+    {
+        $request->validate([
+            'photo' => ['required', 'image', 'max:5120'],
+        ]);
+
+        $user = $subscription->user;
+        
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('photos', 'public');
+            $user->update(['photo' => 'storage/' . $path]);
+            
+            if ($subscription->campingPreRegistration) {
+                $subscription->campingPreRegistration->update(['has_taken_new_photo' => true]);
+            }
+        }
+
+        $this->checkAndConfirmSubscription($subscription);
+
+        return response()->noContent();
+    }
+
+    private function checkAndConfirmSubscription(PreRegistration $subscription): void
+    {
+        $subscription->refresh();
+        $isCamping = $subscription->activity && $subscription->activity->activitable_type === 'App\Models\Camping';
+
+        $wasSelected = $subscription->campingPreRegistration && $subscription->campingPreRegistration->selection_method_id !== null;
+        $paidFee = $subscription->is_fee_paid;
+        
+        $hasPhoto = true;
+        if ($isCamping) {
+            $hasPhoto = $subscription->campingPreRegistration && $subscription->campingPreRegistration->has_taken_new_photo;
+        }
+
+        $activityName = $subscription->activity->name ?? 'Acampamento';
+        $content = "Sua inscrição para a atividade {$activityName} foi aprovada e confirmada! Acesse a aba Minhas Inscrições e clique em 'Prosseguir com a inscrição' para preencher o formulário obrigatório.";
+        
+        $alreadySent = \App\Models\InboxMessage::where('user_id', $subscription->user_id)
+            ->where('title', 'Formulário de Inscrição Disponível')
+            ->where('content', $content)
+            ->exists();
+
+        if ($wasSelected && $paidFee && $hasPhoto && !$alreadySent) {
+            \App\Models\InboxMessage::create([
+                'user_id' => $subscription->user_id,
+                'title' => 'Formulário de Inscrição Disponível',
+                'content' => $content
+            ]);
+        }
     }
 
     /**

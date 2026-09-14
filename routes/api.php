@@ -50,6 +50,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('questions', QuestionController::class);
         Route::apiResource('sections', SectionController::class);
         Route::post('subscriptions/{subscription}/return-form', [SubscriptionController::class, 'returnForm'])->name('subscriptions.return-form');
+        Route::post('subscriptions/{subscription}/pay', [SubscriptionController::class, 'pay'])->name('subscriptions.pay');
+        Route::post('subscriptions/{subscription}/photo', [SubscriptionController::class, 'uploadPhoto'])->name('subscriptions.photo');
         Route::apiResource('subscriptions', SubscriptionController::class);
 
         // Category Sectors
