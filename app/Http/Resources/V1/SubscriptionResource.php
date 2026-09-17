@@ -26,6 +26,7 @@ class SubscriptionResource extends JsonResource
                 : false,
             'selection_method_id' => $campingPreReg->selection_method_id ?? null,
             'substitute_position' => $campingPreReg->substitute_position ?? null,
+            'spouse_id' => $campingPreReg->spouse_id ?? null,
             'is_quitter' => $campingPreReg ? (bool) ($campingPreReg->is_quitter ?? false) : false,
             'is_approved' => $campingPreReg ? (bool) ($campingPreReg->is_approved ?? false) : false,
             'has_answered_form' => $this->answers()->exists(),

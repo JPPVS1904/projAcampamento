@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             SectorSeeder::class,
             QuestionSeeder::class,
+            SubscriptionSeeder::class,
         ]);
     }
 }

@@ -39,6 +39,27 @@ class SubscriptionController extends Controller
             });
         }
 
+        if ($request->has('vacancy_type') && $request->input('vacancy_type') !== 'todos') {
+            $vacancyType = $request->input('vacancy_type');
+            if ($vacancyType === 'casal') {
+                $query->whereHas('campingPreRegistration', function($q) {
+                    $q->whereNotNull('spouse_id');
+                });
+            } elseif ($vacancyType === 'masculina') {
+                $query->whereHas('user', function($q) {
+                    $q->where('sex', 'M');
+                })->whereHas('campingPreRegistration', function($q) {
+                    $q->whereNull('spouse_id');
+                });
+            } elseif ($vacancyType === 'feminina') {
+                $query->whereHas('user', function($q) {
+                    $q->where('sex', 'F');
+                })->whereHas('campingPreRegistration', function($q) {
+                    $q->whereNull('spouse_id');
+                });
+            }
+        }
+
         return SubscriptionResource::collection(
             $query->paginate($request->input('per_page', 100))
         );
