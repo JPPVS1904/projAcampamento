@@ -26,6 +26,7 @@ class UserResource extends JsonResource
             'photo' => $this->photo,
             'is_counselor' => $this->is_counselor,
             'is_admin' => $this->is_admin,
+            'theme' => $this->theme ?? 'dark',
             'marital_status_id' => $this->marital_status_id,
             'marital_status' => MaritalStatusResource::make($this->whenLoaded('maritalStatus')),
             'address' => $this->whenLoaded('address'),

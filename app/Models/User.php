@@ -22,6 +22,7 @@ class User extends Authenticatable
     'photo',
     'is_counselor',
     'is_admin',
+    'theme',
     'password',
     'access_token',
     'refresh_token',

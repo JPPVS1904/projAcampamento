@@ -26,6 +26,7 @@ class UpdateUserRequest extends FormRequest
             'phone' => ['sometimes', 'required', 'string', 'max:20'],
             'email' => ['sometimes', 'required', 'email', 'max:255'],
             'is_counselor' => ['sometimes', 'required', 'boolean'],
+            'theme' => ['sometimes', 'required', 'string', 'in:light,dark'],
             'password' => ['sometimes', 'required', 'string', 'min:8'],
             'marital_status_id' => ['sometimes', 'required', 'integer', 'exists:marital_statuses,id'],
         ];
