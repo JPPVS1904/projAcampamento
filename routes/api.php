@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\AnswerController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\OptionController;
 use App\Http\Controllers\Api\V1\PreRegistrationController;
+use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\QuestionController;
 use App\Http\Controllers\Api\V1\SectionController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
@@ -28,6 +29,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('users', [UserController::class, 'store'])->name('users.store');
+    Route::get('/public/activities', [ActivityController::class, 'publicIndex'])->name('public.activities.index');
+    Route::get('/public/products', [ProductController::class, 'publicIndex'])->name('public.products.index');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -48,6 +51,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('options', OptionController::class);
         Route::apiResource('pre-registrations', PreRegistrationController::class);
         Route::apiResource('questions', QuestionController::class);
+        Route::post('products/upload-image', [ProductController::class, 'uploadImage'])->name('products.upload-image');
+        Route::apiResource('products', ProductController::class);
         Route::apiResource('sections', SectionController::class);
         Route::post('subscriptions/{subscription}/return-form', [SubscriptionController::class, 'returnForm'])->name('subscriptions.return-form');
         Route::post('subscriptions/{subscription}/pay', [SubscriptionController::class, 'pay'])->name('subscriptions.pay');

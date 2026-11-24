@@ -10,6 +10,7 @@ use App\Models\Activity;
 use App\Models\Camping;
 use App\Models\Category;
 use App\Models\Event;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -18,6 +19,37 @@ use Illuminate\Support\Facades\DB;
 
 class ActivityController extends Controller
 {
+    /**
+     * Public listing of activities (camps and events) for the landing page.
+     */
+    public function publicIndex(): JsonResponse
+    {
+        $activities = Activity::with('category')
+            ->orderBy('start_date', 'desc')
+            ->get()
+            ->map(function (Activity $activity) {
+                return [
+                    'id' => $activity->id,
+                    'name' => $activity->name,
+                    'image' => $activity->image,
+                    'place' => $activity->place,
+                    'year' => $activity->year,
+                    'start_date' => $activity->start_date,
+                    'duration_days' => $activity->duration_days,
+                    'activitable_type' => $activity->activitable_type,
+                    'category' => $activity->category ? [
+                        'id' => $activity->category->id,
+                        'name' => $activity->category->name,
+                        'type' => $activity->category->type,
+                    ] : null,
+                ];
+            });
+
+        return response()->json([
+            'data' => $activities,
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
